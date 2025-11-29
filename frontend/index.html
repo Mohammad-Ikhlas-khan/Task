@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Task Analyzer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <!-- INPUT SECTION -->
+    <section class="card input-card">
+      <h2>Enter Task Details</h2>
+
+      <form id="task-form" novalidate>
+        <label>Title <input id="title" required /></label>
+
+        <label>Due Date <input id="due_date" type="date" required/></label>
+
+        <label>Estimated Hours 
+          <input id="estimated_hours" type="number" min="0" value="1" required/>
+        </label>
+
+        <label>Importance (1–10)
+          <input id="importance" type="number" min="1" max="10" value="5" required/>
+        </label>
+
+        <label>Dependencies (comma-separated task IDs)
+          <input id="dependencies" placeholder="e.g. 2,4" />
+        </label>
+      </form>
+
+      <h3>OR Paste JSON Array</h3>
+      <textarea id="bulk-json" rows="6"
+        placeholder='Example:
+[
+  {"title":"Fix login","due_date":"2025-11-30","estimated_hours":3,"importance":8,"dependencies":[]}
+]'></textarea>
+
+      <div class="row actions">
+        <select id="strategy">
+          <option value="smart_balance">Smart Balance</option>
+          <option value="fastest_wins">Fastest Wins</option>
+          <option value="high_impact">High Impact</option>
+          <option value="deadline_driven">Deadline Driven</option>
+        </select>
+        <button id="analyze" class="primary" type="button">Analyze Tasks</button>
+
+        <div id="status" class="status"></div>
+      </div>
+    </section>
+
+    <!-- Analysis Result -->
+    <section class="card output-card">
+      <div>
+          <h2>Analysis Results</h2>
+          <div id="results-empty" class="muted">Press Analyze to get scores.</div>
+          <ul id="results" class="task-list"></ul>
+      </div>
+    <div class="suggestion-card">
+        <h2>Suggested Tasks (Top 3)</h2>
+        <div class="row actions">
+             <label for="strategy-suggest">Suggestion Strategy:</label>
+                <select id="strategy-suggest">
+                    <option value="smart_balance">Smart Balance</option>
+                    <option value="fastest_wins">Fastest Wins</option>
+                    <option value="high_impact">High Impact</option>
+                    <option value="deadline_driven">Deadline Driven</option>
+                </select>
+              <button id="suggest" class="primary" type="button">Suggest Top 3</button>
+        </div>
+        <div id="suggest-empty" class="muted">Press Suggest to see recommended tasks.</div>
+        <ul id="suggest-list" class="task-list"></ul>
+    </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
