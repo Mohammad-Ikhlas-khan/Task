@@ -10,12 +10,16 @@ const resultsEmpty = document.getElementById("results-empty");
 const strategySelect = document.getElementById("strategy");
 const strategySuggestSelect = document.getElementById("strategy-suggest");
 const formTask = document.getElementById("task-form");
+const clearSuggestionsBtn = document.getElementById("clear-suggestions");
+const clearBtn = document.getElementById("clear");
 
+// Utility to set status message
 function setStatus(msg, err = false) {
   statusEl.textContent = msg;
   statusEl.style.color = err ? "var(--danger)" : "var(--muted)";
 }
 
+// Collect task data from form
 function collectFormTask() {
   const title = document.getElementById("title").value.trim();
   const due_date = document.getElementById("due_date").value;
@@ -36,12 +40,14 @@ function collectFormTask() {
 
 function renderResults(data) {
   resultsEl.innerHTML = "";
+  // Handle empty case
   if (!data.length) {
     resultsEmpty.style.display = "block";
     return;
   }
   resultsEmpty.style.display = "none";
-
+  
+  // Render each task
   data.forEach(t => {
     const li = document.createElement("li");
     li.className = "task-item";
@@ -59,6 +65,7 @@ function renderResults(data) {
   });
 }
 
+// Analyze tasks
 async function analyze() {
   setStatus("Analyzing...");
 
@@ -79,17 +86,20 @@ async function analyze() {
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) throw new Error("JSON must be an array");
       tasks = tasks.concat(parsed);
-    } catch (e) {
+    } 
+    catch (e) {
       setStatus("JSON Error: " + e.message, true);
       return;
     }
   }
-
+  
+  // Validate we have tasks
   if (!tasks.length) {
     setStatus("Please fill form or paste JSON", true);
     return;
   }
 
+  // Send tasks to server
   try {
     const strat = strategySelect.value;
 
@@ -98,20 +108,17 @@ async function analyze() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(tasks)
     });
-
+    
+    // Await response
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.error || "Server Error");
 
     setStatus("Analysis complete.");
-    console.log("BACKEND RESPONSE:", data);
-    for (let i = 0; i < data.tasks.length; i++) {
-      console.log(`Task: ${data.tasks[i].title}, Score: ${data.tasks[i].score}`);
-    }
-
+    // Render results
     renderResults(data.tasks);
-
-  } catch (err) {
+  } 
+  catch (err) {
     setStatus("Analyze failed: " + err.message, true);
   }
 }
@@ -143,29 +150,35 @@ function renderSuggestions(data) {
 
 async function suggest() {
   setStatus("Fetching suggestions...");
-
+  
+  // Fetch suggestions from server
   try {
     const strat = strategySuggestSelect.value;
 
     const res = await fetch(`${API_BASE}/suggest/?strategy=${strat}`);
+    // Await response
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.error || "Server Error");
-
+    
+    // Handle no suggestions
     if (!data.suggestions || !data.suggestions.length) {
       setStatus("No suggestions found.", true);
       return;
     }
 
     setStatus("Suggestions loaded.");
+    // Render suggestions
     renderSuggestions(data.suggestions);
 
-  } catch (err) {
+  } 
+  catch (err) {
     setStatus("Suggest failed: " + err.message, true);
   }
 }
 const suggestBtn = document.getElementById("suggest");
 
+// Prevent default form submission
 if (formTask) {
   formTask.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -183,11 +196,27 @@ suggestBtn.addEventListener("click", (e) => {
   suggest();
 });
 
+clearSuggestionsBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  suggestList.innerHTML = "";
+  suggestEmpty.style.display = "block";
+});
+
+clearBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  resultsEl.innerHTML = "";
+  resultsEmpty.style.display = "block";
+  bulkJson.value = "";
+  document.getElementById("title").value = "";
+  document.getElementById("due_date").value = "";
+  document.getElementById("estimated_hours").value = "";
+  document.getElementById("importance").value = "";
+  document.getElementById("dependencies").value = "";
+});
 
 window.addEventListener("beforeunload", (event) => {
   // Check if we have results visible
   if (resultsEl.children.length > 0) {
     event.preventDefault();
-    event.returnValue = "Analysis results are visible. Are you sure you want to leave?";
   }
 });

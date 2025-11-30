@@ -132,6 +132,13 @@ button.muted {
   margin: 12px 0;
 }
 
+.form-button{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
 .task-item {
   display: flex;
   justify-content: space-between;
