@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-RENDER = os.environ.get('RENDER', 'False')=="True"
+RENDER = os.environ.get('RENDER', 'False')=="true"
 
 if RENDER:
     # Use /tmp for SQLite on Render (temporary, data will be lost on restart)
