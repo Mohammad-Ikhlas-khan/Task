@@ -4,17 +4,30 @@ import numpy as np
 import holidays
 def score_task(task: Task, strategy="smart_balance", task_list=None):
     
+    count_days_past_due=(task.due_date-date.today()).days
+    if  count_days_past_due < -30:
+        raise ValueError("Due date is too far in the past.")
     # Calculate business days (excluding weekends and holidays)
+    if task.importance < 1 or task.importance > 10:
+        raise ValueError("Importance must be between 1 and 10.")
+    if task.estimated_hours < 1:
+        raise ValueError("Estimated hours must be at least 1.")
+    
     year1 = date.today().year
     year2=task.due_date.year
     holidays_list= holidays.CountryHoliday('IN', years=range(year1, year2+1))
-    days_to_due = np.busday_count(
-        date.today().isoformat(), 
-        task.due_date.isoformat(),
-        holidays=list(holidays_list)
-    )
-    
-    print(f"Days to due for task {task.id}: {days_to_due} business days")
+    if count_days_past_due >= 0 :
+        days_to_due = np.busday_count(
+            date.today().isoformat(), 
+            task.due_date.isoformat(),
+            holidays=list(holidays_list)
+        )
+    else:
+        days_to_due = -np.busday_count(
+            task.due_date.isoformat(),
+            date.today().isoformat(),
+            holidays=list(holidays_list)
+        )
     importance = task.importance
     effort = task.estimated_hours
 
