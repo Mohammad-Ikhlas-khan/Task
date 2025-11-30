@@ -71,6 +71,9 @@ h1 {
 }
 
 .suggestion-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   width: 100%;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 24px;
@@ -180,7 +183,11 @@ button.muted {
   background: linear-gradient(90deg, var(--success), #c7f0d9);
   color: #05202b;
 }
-
+.suggest-button{
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
 .muted {
   color: var(--muted);
 }

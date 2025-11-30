@@ -47,9 +47,9 @@
         <div class="form-button">
             <button id="analyze" class="primary" type="button">Analyze Tasks</button>
             <button id="clear" class="primary" type="button">Clear All</button>
+            <div id="status" class="status"></div>
         </div>
 
-        <div id="status" class="status"></div>
       </div>
     </section>
 
@@ -62,19 +62,11 @@
       </div>
     <div class="suggestion-card">
         <h2>Suggested Tasks (Top 3)</h2>
-        <div class="row actions">
-             <label for="strategy-suggest">Suggestion Strategy:</label>
-                <select id="strategy-suggest">
-                    <option value="smart_balance">Smart Balance</option>
-                    <option value="fastest_wins">Fastest Wins</option>
-                    <option value="high_impact">High Impact</option>
-                    <option value="deadline_driven">Deadline Driven</option>
-                </select>
-              <div>
+        <div class="suggest-button">
                  <button id="suggest" class="primary" type="button">Suggest Top 3</button>
                  <button id="clear-suggestions" class="primary" type="button">Clear Suggestions</button>
-              </div>
         </div>
+        <div id="based_on"></div>
         <div id="suggest-empty" class="muted">Press Suggest Top 3 to see recommended tasks.</div>
         <ul id="suggest-list" class="task-list"></ul>
     </div>

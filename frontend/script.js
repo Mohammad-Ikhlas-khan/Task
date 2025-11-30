@@ -8,13 +8,13 @@ const statusEl = document.getElementById("status");
 const resultsEl = document.getElementById("results");
 const resultsEmpty = document.getElementById("results-empty");
 const strategySelect = document.getElementById("strategy");
-const strategySuggestSelect = document.getElementById("strategy-suggest");
 const formTask = document.getElementById("task-form");
 const clearSuggestionsBtn = document.getElementById("clear-suggestions");
 const clearBtn = document.getElementById("clear");
+const basedOnSelect = document.getElementById("based_on");
 
 // Utility to set status message
-function setStatus(msg, err = false) {
+function setStatus(msg="", err = false) {
   statusEl.textContent = msg;
   statusEl.style.color = err ? "var(--danger)" : "var(--muted)";
 }
@@ -132,7 +132,7 @@ function renderSuggestions(data) {
   suggestEmpty.style.display = "none";
 
   data.forEach(t => {
-    const li = document.createElement("li");
+    const li = document.createElement("li"); 
     li.className = "task-item";
     li.innerHTML = `
       <div class="task-left">
@@ -142,10 +142,14 @@ function renderSuggestions(data) {
       </div>
       <div>
         <div class="badge high">Score: ${t.score.toFixed(1)}</div>
+        <div class="muted">Strategy: ${t.strategy}</div>
       </div>
     `;
     suggestList.appendChild(li);
   });
+    const h3 = document.createElement("h3");
+    h3.textContent = `Based on: ${data[0].based_on.replace("_", " ")}`;
+    basedOnSelect.appendChild(h3); 
 }
 
 async function suggest() {
@@ -153,9 +157,8 @@ async function suggest() {
   
   // Fetch suggestions from server
   try {
-    const strat = strategySuggestSelect.value;
 
-    const res = await fetch(`${API_BASE}/suggest/?strategy=${strat}`);
+    const res = await fetch(`${API_BASE}/suggest/`);
     // Await response
     const data = await res.json();
 
@@ -170,7 +173,6 @@ async function suggest() {
     setStatus("Suggestions loaded.");
     // Render suggestions
     renderSuggestions(data.suggestions);
-
   } 
   catch (err) {
     setStatus("Suggest failed: " + err.message, true);
@@ -200,7 +202,7 @@ clearSuggestionsBtn.addEventListener("click", (e) => {
   e.preventDefault();
   suggestList.innerHTML = "";
   suggestEmpty.style.display = "block";
-  strategySuggestSelect.value = "smart_balance";
+  setStatus("");
 });
 
 clearBtn.addEventListener("click", (e) => {
@@ -214,6 +216,8 @@ clearBtn.addEventListener("click", (e) => {
   document.getElementById("estimated_hours").value = "";
   document.getElementById("importance").value = "";
   document.getElementById("dependencies").value = "";
+
+  setStatus("");
 });
 
 window.addEventListener("beforeunload", (event) => {
