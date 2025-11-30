@@ -167,12 +167,11 @@ async function suggest() {
       return;
     }
 
+    basedOnSelect.textContent=`Based on ${data.based_on}`
+
     setStatus("Suggestions loaded.");
     // Render suggestions
     renderSuggestions(data.suggestions);
-    const h3 = document.createElement("h3");
-    h3.textContent = `Based on: ${data.based_on}`;
-    basedOnSelect.appendChild(h3);
   }
   catch (err) {
     setStatus("Suggest failed: " + err.message, true);
