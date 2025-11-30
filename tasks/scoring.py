@@ -8,7 +8,6 @@ def score_task(task: Task, strategy="smart_balance", task_list=None):
     year1 = date.today().year
     year2=task.due_date.year
     holidays_list= holidays.CountryHoliday('IN', years=range(year1, year2+1))
-    print(f"Holidays considered for scoring: {holidays_list}")
     days_to_due = np.busday_count(
         date.today().isoformat(), 
         task.due_date.isoformat(),
