@@ -30,7 +30,7 @@ class ScoringAlgorithmTestCase(TestCase):
         # Task 3: Overdue task
         self.task_overdue = Task.objects.create(
             title="Overdue report",
-            due_date=date.today() - timedelta(days=5),
+            due_date=date.today() - timedelta(days=10),
             estimated_hours=5,
             importance=7,
             dependencies=[]
@@ -62,7 +62,39 @@ class ScoringAlgorithmTestCase(TestCase):
             importance=7,
             dependencies=[str(self.task_blocking.id)]
         )
-    
+
+        # Task 7: Task with missing importance (to test validation)
+        self.task_missing_importance = Task.objects.create(
+            title="Task with missing importance",
+            due_date=date.today() + timedelta(days=10),
+            estimated_hours=5,
+            dependencies=[]
+        )
+        # Task 8: Task with invalid importance (to test validation)
+        self.task_invalid_imporatnce = Task.objects.create(
+            title="Task with invalid hours",
+            due_date=date.today() + timedelta(days=10),
+            estimated_hours=3,
+            importance=-2,
+            dependencies=[]
+        )
+        # Task 9: Task with missing estimated hours (to test validation)
+        self.task_missing_estimated_hours = Task.objects.create(
+            title="Task with missing estimated hours",
+            due_date=date.today() + timedelta(days=10),
+            importance=5,
+            dependencies=[]
+        )
+
+        # Task 10: Task with invalid estimated hours (to test validation)
+        self.task_invalid_estimated_hours = Task.objects.create(
+            title="Task with invalid estimated hours",
+            due_date=date.today() + timedelta(days=10),
+            estimated_hours=0,
+            importance=5,
+            dependencies=[]
+        )
+
     def test_smart_balance_strategy(self):
         """Test 1: Smart Balance strategy prioritizes based on multiple factors"""
         score, explanation = score_task(self.task_urgent, strategy="smart_balance")
@@ -162,3 +194,35 @@ class ScoringAlgorithmTestCase(TestCase):
         score2, _ = score_task(self.task_urgent, strategy="smart_balance")
         
         self.assertEqual(score1, score2, "Score should be consistent across multiple calls")
+    
+    def test_with_missing_or_invalid_importance(self):
+        """Test 8: Handle tasks with missing or invalid data gracefully"""
+        # Task with missing importance
+        score, explanation = score_task(self.task_missing_importance, strategy="smart_balance")
+        self.assertIsNotNone(score, "Score should be computed even with missing importance as default is set")
+    
+        # Task with invalid importance (e.g., greater than 10)
+        with self.assertRaises(ValueError):
+           score_task(self.task_invalid_imporatnce, strategy="smart_balance")
+
+    def test_with_missing_or_invalid_estimated_hours(self):
+        """Test 9: Handle tasks with missing estimated hours gracefully"""
+        # Task with missing estimated hours
+        score, explanation = score_task(self.task_missing_estimated_hours, strategy="smart_balance")
+        self.assertIsNotNone(score, "Score should be computed even with missing estimated hours as default is set")
+        
+        # Task with invalid estimated hours (e.g., less than 1)
+        with self.assertRaises(ValueError):
+           score_task(self.task_invalid_estimated_hours, strategy="smart_balance")
+
+    def test_error_when_too_far_past_due(self):
+        """Test 10: Raise ValueError when task is overdue by more than 30 days"""
+        very_old_task = Task.objects.create(
+            title="Ancient task",
+            due_date=date.today() - timedelta(days=31),
+            estimated_hours=1,
+            importance=5,
+            dependencies=[]
+        )
+        with self.assertRaises(ValueError):
+            score_task(very_old_task)
