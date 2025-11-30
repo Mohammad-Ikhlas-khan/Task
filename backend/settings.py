@@ -64,7 +64,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'frontend'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,12 +81,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-RENDER=os.environ.get('RENDER', 'False')
+RENDER = os.environ.get('RENDER', 'False')=="True"
 
 if RENDER:
-    DB_PATH = "/var/data/db.sqlite3"
+    # Use /tmp for SQLite on Render (temporary, data will be lost on restart)
+    DB_PATH = "/tmp/db.sqlite3"
 else:
-    DB_PATH = BASE_DIR / '.data' / 'db.sqlite3'
+    DB_PATH = BASE_DIR /'.data'/'db.sqlite3'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -130,6 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'frontend']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

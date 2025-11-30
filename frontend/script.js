@@ -14,7 +14,7 @@ const clearBtn = document.getElementById("clear");
 const basedOnSelect = document.getElementById("based_on");
 
 // Utility to set status message
-function setStatus(msg="", err = false) {
+function setStatus(msg = "", err = false) {
   statusEl.textContent = msg;
   statusEl.style.color = err ? "var(--danger)" : "var(--muted)";
 }
@@ -46,7 +46,7 @@ function renderResults(data) {
     return;
   }
   resultsEmpty.style.display = "none";
-  
+
   // Render each task
   data.forEach(t => {
     const li = document.createElement("li");
@@ -86,13 +86,13 @@ async function analyze() {
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) throw new Error("JSON must be an array");
       tasks = tasks.concat(parsed);
-    } 
+    }
     catch (e) {
       setStatus("JSON Error: " + e.message, true);
       return;
     }
   }
-  
+
   // Validate we have tasks
   if (!tasks.length) {
     setStatus("Please fill form or paste JSON", true);
@@ -108,7 +108,7 @@ async function analyze() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(tasks)
     });
-    
+
     // Await response
     const data = await res.json();
 
@@ -117,7 +117,7 @@ async function analyze() {
     setStatus("Analysis complete.");
     // Render results
     renderResults(data.tasks);
-  } 
+  }
   catch (err) {
     setStatus("Analyze failed: " + err.message, true);
   }
@@ -132,7 +132,7 @@ function renderSuggestions(data) {
   suggestEmpty.style.display = "none";
 
   data.forEach(t => {
-    const li = document.createElement("li"); 
+    const li = document.createElement("li");
     li.className = "task-item";
     li.innerHTML = `
       <div class="task-left">
@@ -147,14 +147,14 @@ function renderSuggestions(data) {
     `;
     suggestList.appendChild(li);
   });
-    const h3 = document.createElement("h3");
-    h3.textContent = `Based on: ${data[0].based_on.replace("_", " ")}`;
-    basedOnSelect.appendChild(h3); 
+  const h3 = document.createElement("h3");
+  h3.textContent = `Based on: ${data[0].based_on.replace("_", " ")}`;
+  basedOnSelect.appendChild(h3);
 }
 
 async function suggest() {
   setStatus("Fetching suggestions...");
-  
+
   // Fetch suggestions from server
   try {
 
@@ -163,7 +163,7 @@ async function suggest() {
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.error || "Server Error");
-    
+
     // Handle no suggestions
     if (!data.suggestions || !data.suggestions.length) {
       setStatus("No suggestions found.", true);
@@ -173,7 +173,7 @@ async function suggest() {
     setStatus("Suggestions loaded.");
     // Render suggestions
     renderSuggestions(data.suggestions);
-  } 
+  }
   catch (err) {
     setStatus("Suggest failed: " + err.message, true);
   }
