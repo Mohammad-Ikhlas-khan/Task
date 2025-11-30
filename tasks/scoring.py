@@ -3,7 +3,6 @@ from datetime import date
 import numpy as np
 import holidays
 def score_task(task: Task, strategy="smart_balance", task_list=None):
-    
     count_days_past_due=(task.due_date-date.today()).days
     if  count_days_past_due < -30:
         raise ValueError("Due date is too far in the past.")
@@ -54,7 +53,10 @@ def score_task(task: Task, strategy="smart_balance", task_list=None):
             # Score higher if other tasks depend on this
             task_id = str(task.id if task.id else "")
             for t in task_list:
-                deps = t.dependencies if isinstance(t.dependencies, list) else []
+                if isinstance(t, dict):
+                    deps = t.get('dependencies', [])
+                else:
+                    deps = t.dependencies if isinstance(t.dependencies, list) else []
                 if task_id and task_id in deps:
                     block_score += 20
         # Blend: overdue, soon due, important, low effort, blocks others
