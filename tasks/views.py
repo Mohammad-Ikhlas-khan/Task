@@ -94,12 +94,9 @@ def suggest_tasks(request):
             tasks = Task.objects.all()
             based_on="all"
 
-    if not tasks:
-        return JsonResponse({'error':'No tasks to suggest'},status=400)
-
-
     if based_on=="":
         based_on="due_date_today"
+        
     suggestions = []
     for task in tasks:
         # Recalculate score based on the selected strategy
