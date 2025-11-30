@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000/api/tasks";
+const API_BASE = "https://task-2-7nne.onrender.com/api/tasks";
 
 const suggestList = document.getElementById("suggest-list");
 const suggestEmpty = document.getElementById("suggest-empty");
