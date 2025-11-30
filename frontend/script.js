@@ -200,6 +200,7 @@ clearSuggestionsBtn.addEventListener("click", (e) => {
   e.preventDefault();
   suggestList.innerHTML = "";
   suggestEmpty.style.display = "block";
+  strategySuggestSelect.value = "smart_balance";
 });
 
 clearBtn.addEventListener("click", (e) => {
@@ -207,6 +208,7 @@ clearBtn.addEventListener("click", (e) => {
   resultsEl.innerHTML = "";
   resultsEmpty.style.display = "block";
   bulkJson.value = "";
+  strategySelect.value = "smart_balance";
   document.getElementById("title").value = "";
   document.getElementById("due_date").value = "";
   document.getElementById("estimated_hours").value = "";
