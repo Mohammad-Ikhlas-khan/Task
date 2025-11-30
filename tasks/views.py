@@ -96,7 +96,7 @@ def suggest_tasks(request):
 
     if based_on=="":
         based_on="due_date_today"
-        
+
     suggestions = []
     for task in tasks:
         # Recalculate score based on the selected strategy
@@ -110,10 +110,9 @@ def suggest_tasks(request):
                 'score': task.score,
                 'explanation': task.explanation,
                 'strategy': task.strategy,
-                'based_on': based_on
             })
     top3_suggestions = sorted(suggestions, key=lambda x: x['score'],reverse=True)[:3]
-    return JsonResponse({'suggestions': top3_suggestions})
+    return JsonResponse({'suggestions': top3_suggestions,'based_on':based_on})
 
     
     

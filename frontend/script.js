@@ -147,9 +147,6 @@ function renderSuggestions(data) {
     `;
     suggestList.appendChild(li);
   });
-  const h3 = document.createElement("h3");
-  h3.textContent = `Based on: ${data[0].based_on.replace("_", " ")}`;
-  basedOnSelect.appendChild(h3);
 }
 
 async function suggest() {
@@ -173,6 +170,9 @@ async function suggest() {
     setStatus("Suggestions loaded.");
     // Render suggestions
     renderSuggestions(data.suggestions);
+    const h3 = document.createElement("h3");
+    h3.textContent = `Based on: ${data.based_on}`;
+    basedOnSelect.appendChild(h3);
   }
   catch (err) {
     setStatus("Suggest failed: " + err.message, true);
